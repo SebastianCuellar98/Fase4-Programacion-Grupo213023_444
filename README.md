@@ -89,4 +89,14 @@ class Cliente(Entidad):
             f"Cliente: {self.__nombre} "
             f"| Correo: {self.__correo}"
         )
-        
+
+
+# PRUEBA DEL PROGRAMA
+
+id_cliente = int(input("Ingrese el ID del cliente: "))
+nombre = input("Ingrese el nombre del cliente: ")
+correo = input("Ingrese el correo electrónico: ")
+
+cliente1 = Cliente(id_cliente, nombre, correo)
+
+print(cliente1.describir())
