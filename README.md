@@ -46,3 +46,47 @@ class Entidad(ABC):
     @abstractmethod
     def describir(self):
         pass
+
+class Cliente(Entidad):
+
+    def __init__(self, id, nombre, correo):
+        super().__init__(id)
+        self.set_nombre(nombre)
+        self.set_correo(correo)
+
+    # Getter nombre
+    def get_nombre(self):
+        return self.__nombre
+
+    # Setter nombre con validación
+    def set_nombre(self, nombre):
+        if not nombre.strip():
+            raise ClienteError("El nombre no puede estar vacío")
+
+        if len(nombre.strip()) < 3:
+            raise ClienteError(
+                "El nombre debe tener al menos 3 caracteres"
+            )
+
+        self.__nombre = nombre
+
+    # Getter correo
+    def get_correo(self):
+        return self.__correo
+
+    # Setter correo con validación
+    def set_correo(self, correo):
+        if "@" not in correo or "." not in correo:
+            raise ClienteError(
+                "Correo electrónico inválido"
+            )
+
+        self.__correo = correo
+
+    # Método heredado de la clase abstracta
+    def describir(self):
+        return (
+            f"Cliente: {self.__nombre} "
+            f"| Correo: {self.__correo}"
+        )
+        
