@@ -1,4 +1,3 @@
-# trabajo Fase4
 # Fase4-Programacion-Grupo213023_444
 """
 Parte 1 - Excepciones personalizadas, clase abstracta Entidad y configuración de logs
