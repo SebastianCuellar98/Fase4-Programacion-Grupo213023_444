@@ -215,5 +215,3 @@ if __name__ == "__main__":
     except ServicioError as se:
         print(f"Error en el servicio: {se}")
 
- ${self.costo_total}"
-        )
