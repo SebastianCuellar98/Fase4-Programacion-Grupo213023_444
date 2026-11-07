@@ -4,11 +4,11 @@ Parte 1 - Excepciones personalizadas, clase abstracta Entidad y configuración d
 Software FJ - Programación 213023 - UNAD - Fase 4
 """
 
-# Módulo para guardar eventos y errores en un archivo y Herramientas para crear clases abstractas
+# Módulo para guardar eventos y errores en un archivo 
 import logging
 from abc import ABC, abstractmethod
 
-# Configuración del archivo de logs (se ejecuta una sola vez al importar este archivo)
+# Configuración del archivo de logs 
 logging.basicConfig(
     filename="software_fj.log",
     level=logging.INFO,
