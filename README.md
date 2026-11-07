@@ -47,7 +47,12 @@ class Entidad(ABC):
     def describir(self):
         pass
 
-class Cliente(Entidad):
+ """
+ Clase Cliente con validaciones y encapsulación de datos personales
+Software FJ - Programación 213023 - UNAD - Fase 4
+"""
+ 
+ class Cliente(Entidad):
 
     def __init__(self, id, nombre, correo):
         super().__init__(id)
