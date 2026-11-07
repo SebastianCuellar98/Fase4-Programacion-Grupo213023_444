@@ -227,69 +227,6 @@ class AsesoriaEspecializada(Servicio):
         )
 
 
-# ============================================================
-# PARTE 4: RESERVA
-# ============================================================
 
-class Reserva(Entidad):
-    def __init__(self, id, cliente, servicio, duracion, **opciones):
-        super().__init__(id)
-        if not isinstance(cliente, Cliente):
-            raise ReservaError("La reserva requiere un cliente válido")
-        if not isinstance(servicio, Servicio):
-            raise ReservaError("La reserva requiere un servicio válido")
-        if not es_numero(duracion) or duracion <= 0:
-            raise ReservaError("La duración debe ser un número mayor a cero")
-
-        self.cliente = cliente
-        self.servicio = servicio
-        self.duracion = duracion
-        self.opciones = opciones
-        self.estado = "PENDIENTE"
-        self.total = None
-
-    def confirmar(self):
-        if self.estado != "PENDIENTE":
-            raise ReservaError(
-                f"No se puede confirmar una reserva {self.estado}"
-            )
-        if not self.servicio.disponible:
-            raise ReservaError("El servicio no está disponible")
-        self.estado = "CONFIRMADA"
-
-    def cancelar(self):
-        if self.estado == "CANCELADA":
-            raise ReservaError("La reserva ya estaba cancelada")
-        self.estado = "CANCELADA"
-
-    def procesar(self):
-        try:
-            self.confirmar()
-            total = self.servicio.calcular_costo(
-                self.duracion, **self.opciones
-            )
-        except (ServicioError, TypeError) as e:
-            self.estado = "PENDIENTE"
-            raise ReservaError(
-                "No se pudo procesar la reserva"
-            ) from e
-        else:
-            self.total = total
-            logging.info(
-                "Reserva %s procesada. Total: %s", self.id, total
-            )
-            return total
-        finally:
-            logging.info(
-                "Terminó el proceso de la reserva %s (estado: %s)",
-                self.id, self.estado
-            )
-
-    def describir(self):
-        return (
-            f"Reserva {self.id} | {self.cliente.get_nombre()} | "
-            f"{type(self.servicio).__name__} | "
-            f"duración: {self.duracion} | {self.estado}"
-        )
 
 
