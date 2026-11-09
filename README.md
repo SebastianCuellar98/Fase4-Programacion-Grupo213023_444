@@ -51,42 +51,133 @@ class Entidad(ABC):
 # ============================================================
 
 class Cliente(Entidad):
-    def __init__(self, id, nombre, correo):
+
+    def __init__(self, id, nombre, correo, telefono):
+        
+        if not isinstance(id, int) or id <= 0:
+            raise ClienteError(
+                "El ID debe ser un número entero mayor que cero"
+            )
+
         super().__init__(id)
+
         self.set_nombre(nombre)
         self.set_correo(correo)
+        self.set_telefono(telefono)
+
+    # =========================
+    # NOMBRE
+    # =========================
 
     def get_nombre(self):
         return self.__nombre
 
     def set_nombre(self, nombre):
+
         if not isinstance(nombre, str):
-            raise ClienteError("El nombre debe ser texto")
+            raise ClienteError(
+                "El nombre debe ser texto"
+            )
+
         nombre = nombre.strip()
+
         if not nombre:
-            raise ClienteError("El nombre no puede estar vacío")
+            raise ClienteError(
+                "El nombre no puede estar vacío"
+            )
+
         if len(nombre) < 3:
-            raise ClienteError("El nombre debe tener al menos 3 caracteres")
+            raise ClienteError(
+                "El nombre debe tener al menos 3 caracteres"
+            )
+
+        if not nombre.replace(" ", "").isalpha():
+            raise ClienteError(
+                "El nombre solo debe contener letras"
+            )
+
         self.__nombre = nombre
+
+    # =========================
+    # CORREO
+    # =========================
 
     def get_correo(self):
         return self.__correo
 
     def set_correo(self, correo):
+
         if not isinstance(correo, str):
-            raise ClienteError("El correo debe ser texto")
+            raise ClienteError(
+                "El correo debe ser texto"
+            )
+
         correo = correo.strip()
-        if " " in correo or correo.count("@") != 1:
-            raise ClienteError(f"Correo electrónico inválido: {correo}")
+
+        if " " in correo:
+            raise ClienteError(
+                "El correo no debe contener espacios"
+            )
+
+        if correo.count("@") != 1:
+            raise ClienteError(
+                "Correo electrónico inválido"
+            )
+
         usuario, dominio = correo.split("@")
+
         if usuario == "" or "." not in dominio:
-            raise ClienteError(f"Correo electrónico inválido: {correo}")
-        if dominio.startswith(".") or dominio.endswith("."):
-            raise ClienteError(f"Correo electrónico inválido: {correo}")
+            raise ClienteError(
+                "Correo electrónico inválido"
+            )
+
         self.__correo = correo
 
+    # =========================
+    # TELEFONO
+    # =========================
+
+    def get_telefono(self):
+        return self.__telefono
+
+    def set_telefono(self, telefono):
+
+        telefono = str(telefono)
+
+        if not telefono.isdigit():
+            raise ClienteError(
+                "El teléfono solo debe contener números"
+            )
+
+        if len(telefono) < 7:
+            raise ClienteError(
+                "El teléfono debe tener al menos 7 dígitos"
+            )
+
+        self.__telefono = telefono
+
+    # =========================
+    # ACTUALIZAR DATOS
+    # =========================
+
+    def actualizar_correo(self, nuevo_correo):
+        self.set_correo(nuevo_correo)
+
+    def actualizar_telefono(self, nuevo_telefono):
+        self.set_telefono(nuevo_telefono)
+
+    # =========================
+    # DESCRIPCION
+    # =========================
+
     def describir(self):
-        return f"Cliente: {self.__nombre} | Correo: {self.__correo}"
+        return (
+            f"Cliente ID: {self.id} | "
+            f"Nombre: {self.__nombre} | "
+            f"Correo: {self.__correo} | "
+            f"Telefono: {self.__telefono}"
+        )
+        
 
 
 # ============================================================
