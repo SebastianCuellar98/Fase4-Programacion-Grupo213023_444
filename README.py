@@ -1,7 +1,6 @@
 """
 Software FJ - Sistema Integral de Gestión de Clientes, Servicios y Reservas
 Programación 213023 - UNAD - Fase 4
-Proyecto completo en un solo archivo.
 """
 
 
