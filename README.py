@@ -9,10 +9,10 @@ Proyecto completo en un solo archivo.
 # PARTE 1: EXCEPCIONES, ENTIDAD Y LOGS
 # ============================================================
 
-import logging                       # Módulo para guardar eventos y errores en un archivo
-from abc import ABC, abstractmethod  # Herramientas para crear clases abstractas
+import logging                       
+from abc import ABC, abstractmethod  
 
-# Configuración del archivo de logs (se ejecuta una sola vez al importar este archivo)
+
 logging.basicConfig(
     filename="software_fj.log",                           
     level=logging.INFO,                                   
