@@ -59,7 +59,7 @@ class Entidad(ABC):
 
 class Cliente(Entidad):                         
 
-   def __init__(self, id, nombre, correo):       # Constructor del cliente
+    def __init__(self, id, nombre, correo):       # Constructor del cliente
         super().__init__(id)                     # Guarda el ID heredado de Entidad
         self.set_nombre(nombre)                  # Valida y guarda el nombre
         self.set_correo(correo)                  # Valida y guarda el correo
