@@ -59,49 +59,49 @@ class Entidad(ABC):
 
 class Cliente(Entidad):                         
 
-    def __init__(self, id, nombre, correo):     
-        super().__init__(id)                    
-        self.set_nombre(nombre)                 
-        self.set_correo(correo)                 
+   def __init__(self, id, nombre, correo):       # Constructor del cliente
+        super().__init__(id)                     # Guarda el ID heredado de Entidad
+        self.set_nombre(nombre)                  # Valida y guarda el nombre
+        self.set_correo(correo)                  # Valida y guarda el correo
 
     # Getter nombre
     def get_nombre(self):                       
-        return self.__nombre   
+        return self.__nombre                     # Retorna el nombre del cliente
 
     # Setter nombre con validación
     def set_nombre(self, nombre):               
-        if not isinstance(nombre, str):         
+        if not isinstance(nombre, str):          # Verifica que el nombre sea texto
             raise ClienteError("El nombre debe ser texto")   
-        nombre = nombre.strip()                 
-        if not nombre:                          
+        nombre = nombre.strip()                  # Elimina espacios al inicio y al final
+        if not nombre:                           # Verifica que el nombre no esté vacío
             raise ClienteError("El nombre no puede estar vacío")   
-        if len(nombre) < 3:                     
+        if len(nombre) < 3:                       # Debe tener mínimo 3 caracteres
             raise ClienteError("El nombre debe tener al menos 3 caracteres")   
-        self.__nombre = nombre                  
+        self.__nombre = nombre                   # Guarda el nombre validado
 
     # Getter correo
     def get_correo(self):                       
-        return self.__correo                  
+        return self.__correo                     # Retorna el correo del cliente
 
     # Setter correo con validación
     def set_correo(self, correo):              
-        if not isinstance(correo, str):       
+        if not isinstance(correo, str):          # Verifica que el correo sea texto
             raise ClienteError("El correo debe ser texto")   
-        correo = correo.strip()                 
+        correo = correo.strip()                  # Elimina espacios innecesarios
         if " " in correo or correo.count("@") != 1:   
-            raise ClienteError(f"Correo electrónico inválido: {correo}")   
-        usuario, dominio = correo.split("@")    
+            raise ClienteError(f"Correo electrónico inválido: {correo}")         # Verifica estructura básica del correo
+        usuario, dominio = correo.split("@")                                     # Divide el correo en usuario y dominio
         if usuario == "" or "." not in dominio: 
-            raise ClienteError(f"Correo electrónico inválido: {correo}")   
+            raise ClienteError(f"Correo electrónico inválido: {correo}")         # Verifica que exista dominio válido
         if dominio.startswith(".") or dominio.endswith("."):   
-            raise ClienteError(f"Correo electrónico inválido: {correo}")   
-        self.__correo = correo                  
+            raise ClienteError(f"Correo electrónico inválido: {correo}")         # Evita dominios incorrectos  
+        self.__correo = correo                                                   # Guarda el correo validado
 
     # Método heredado de la clase abstracta
     def describir(self):                       
         return (                                
-            f"Cliente: {self.__nombre} "      
-            f"| Correo: {self.__correo}"        
+            f"Cliente: {self.__nombre} "                                        # Muestra el nombre del cliente
+            f"| Correo: {self.__correo}"                                        # Muestra el correo del cliente
         )
 
 
