@@ -9,15 +9,15 @@ Programación 213023 - UNAD - Fase 4
 # PARTE 1: EXCEPCIONES, ENTIDAD Y LOGS
 # ============================================================
 
-import logging                       
-from abc import ABC, abstractmethod  
+import logging                       # Módulo estándar para el registro de eventos y errores
+from abc import ABC, abstractmethod  # Herramientas para definir clases y métodos abstractos
 
 
-logging.basicConfig(
-    filename="software_fj.log",                           
-    level=logging.INFO,                                   
-    format="%(asctime)s | %(levelname)s | %(message)s",   
-    encoding="utf-8",                                     
+logging.basicConfig(                                      # Configura el archivo de logs del sistema
+    filename="software_fj.log",                           # Nombre del archivo donde se guardan los eventos
+    level=logging.INFO,                                   # Nivel mínimo de eventos a registrar (INFO y superiores)
+    format="%(asctime)s | %(levelname)s | %(message)s",   # Formato: fecha/hora, severidad y mensaje
+    encoding="utf-8",                                     # Codificación UTF-8 para soportar tildes y eñes
 )
 
 
@@ -43,13 +43,13 @@ class ReservaError(ErrorFJ):
 
 
 # ---------------- CLASE ABSTRACTA GENERAL ----------------
-class Entidad(ABC):                  
-    def __init__(self, id):          
-        self.id = id                 
+class Entidad(ABC):                  # Clase base abstracta para todas las entidades del sistema
+    def __init__(self, id):          # Constructor común que recibe el identificador único
+        self.id = id                 # Almacena el identificador de la entidad
 
-    @abstractmethod                  
-    def describir(self):            
-        pass                         
+    @abstractmethod                  # Obliga a las subclases a implementar este método
+    def describir(self):             # Método abstracto que devuelve una descripción legible
+        pass                         # La implementación concreta la define cada subclase
 
 
 
@@ -110,115 +110,125 @@ class Cliente(Entidad):
 # PARTE 3: SERVICIOS
 # ============================================================
 
-def es_numero(valor):                           
-    
-    return isinstance(valor, (int, float)) and not isinstance(valor, bool)
+def es_numero(valor):                           # Verifica si un valor es numérico y descarta booleanos
+    return isinstance(valor, (int, float)) and not isinstance(valor, bool)  # True solo para int o float reales
 
 
 # ---------------- CLASE ABSTRACTA SERVICIO ----------------
 class Servicio(Entidad):                        # Servicio hereda de Entidad
     def __init__(self, id, costo_base, disponible=True):   # Constructor general de todo servicio
-        super().__init__(id)                    
-        self.set_costo_base(costo_base)         
-        if not isinstance(disponible, bool):    
-            raise ServicioError("La disponibilidad debe ser un valor verdadero o falso")  
-        self.disponible = disponible            
+        super().__init__(id)                    # Inicializa el ID heredado de Entidad
+        self.set_costo_base(costo_base)         # Valida y asigna el costo base encapsulado
+        if not isinstance(disponible, bool):    # Valida que la disponibilidad sea booleana
+            raise ServicioError("La disponibilidad debe ser un valor verdadero o falso")  # Lanza error si no es bool
+        self.disponible = disponible            # Guarda el estado de disponibilidad del servicio
 
     # Getter costo base
-    def get_costo_base(self):                   
-        return self.__costo_base                
+    def get_costo_base(self):                   # Devuelve el costo base encapsulado
+        return self.__costo_base                # Acceso controlado al atributo privado
 
     # Setter costo base con validación
-    def set_costo_base(self, costo_base):       
-        if not es_numero(costo_base):     
-            raise ServicioError("El costo base debe ser un número válido")   
-        if costo_base < 0:                      
-            raise ServicioError("El costo base del servicio no puede ser negativo")  
-        self.__costo_base = costo_base          
+    def set_costo_base(self, costo_base):       # Valida y actualiza el costo base
+        if not es_numero(costo_base):           # Comprueba que sea un número válido
+            raise ServicioError("El costo base debe ser un número válido")   # Error por tipo inválido
+        if costo_base < 0:                      # Impide costos base negativos
+            raise ServicioError("El costo base del servicio no puede ser negativo")  # Error por valor negativo
+        self.__costo_base = costo_base          # Guarda el costo base validado
 
-    @abstractmethod                           
-    def calcular_costo(self, *args, **kwargs):  
-        pass                                    
+    @staticmethod
+    def _validar_impuesto(impuesto):            # Valida el parámetro opcional de impuesto para todas las subclases
+        if not es_numero(impuesto):             # Comprueba que el impuesto sea numérico
+            raise ServicioError("El impuesto debe ser un número válido")     # Error si no es número
+        if not (0.0 <= impuesto <= 1.0):        # Verifica que esté en rango proporcional (0.0 a 1.0)
+            raise ServicioError("El impuesto debe estar entre 0.0 y 1.0")    # Error si está fuera de rango
+
+    @abstractmethod                             # Obliga a cada servicio especializado a calcular su costo
+    def calcular_costo(self, *args, **kwargs):  # Firma polimórfica que admite parámetros opcionales
+        pass                                    # Implementado por cada subclase
 
 
 # ---------------- SERVICIO 1: RESERVA DE SALA ----------------
-class ReservaSala(Servicio):                    
-    def __init__(self, id, costo_base, capacidad, proyector=False, disponible=True):  
-        super().__init__(id, costo_base, disponible)   
-        if not isinstance(capacidad, int) or isinstance(capacidad, bool) or capacidad <= 0:  
-            raise ServicioError("La capacidad de la sala debe ser un entero mayor a cero")  
-        if not isinstance(proyector, bool):     
-            raise ServicioError("El proyector debe ser un valor verdadero o falso")   
-        self.capacidad = capacidad              
-        self.proyector = proyector             
+class ReservaSala(Servicio):                    # Servicio especializado para reserva de salas
+    def __init__(self, id, costo_base, capacidad, proyector=False, disponible=True):  # Constructor de sala
+        super().__init__(id, costo_base, disponible)   # Inicializa atributos comunes de Servicio
+        if not isinstance(capacidad, int) or isinstance(capacidad, bool) or capacidad <= 0:  # Valida capacidad entera > 0
+            raise ServicioError("La capacidad de la sala debe ser un entero mayor a cero")   # Error por capacidad inválida
+        if not isinstance(proyector, bool):     # Valida que proyector sea booleano
+            raise ServicioError("El proyector debe ser un valor verdadero o falso")          # Error por tipo inválido
+        self.capacidad = capacidad              # Almacena la capacidad máxima de personas
+        self.proyector = proyector              # Indica si incluye proyector
 
-    def calcular_costo(self, horas, descuento=0.0):  
-        if not es_numero(horas) or horas <= 0:  
-            raise ServicioError("Las horas de reserva de la sala deben ser mayores a cero")  
-        if not es_numero(descuento):           
-            raise ServicioError("El descuento debe ser un número válido")   
-        if not (0.0 <= descuento <= 1.0):       
-            raise ServicioError("El descuento debe estar entre 0.0 y 1.0")  
-        subtotal = self.get_costo_base() * horas   
-        if self.proyector:                      
-            subtotal += 30.0                    
-        total = subtotal * (1 - descuento)     
-        logging.info(f"Cálculo de costo para ReservaSala ID {self.id}: ${total}")   
-        return round(total, 2)                  
+    def calcular_costo(self, horas, descuento=0.0, impuesto=0.0):  # Sobrecarga mediante parámetros opcionales
+        if not es_numero(horas) or horas <= 0:  # Valida que las horas sean un número positivo
+            raise ServicioError("Las horas de reserva de la sala deben ser mayores a cero")  # Error por horas inválidas
+        if not es_numero(descuento):            # Valida que el descuento sea numérico
+            raise ServicioError("El descuento debe ser un número válido")   # Error por tipo inválido
+        if not (0.0 <= descuento <= 1.0):       # Verifica rango válido del descuento (0% a 100%)
+            raise ServicioError("El descuento debe estar entre 0.0 y 1.0")  # Error por descuento fuera de rango
+        self._validar_impuesto(impuesto)        # Valida el porcentaje de impuesto opcional
+        subtotal = self.get_costo_base() * horas   # Calcula el subtotal multiplicando tarifa base por horas
+        if self.proyector:                      # Si incluye proyector, suma el recargo fijo
+            subtotal += 30.0                    # Recargo adicional por uso de proyector
+        total = subtotal * (1 - descuento) * (1 + impuesto)  # Aplica descuento y luego impuesto opcional
+        logging.info(f"Cálculo de costo para ReservaSala ID {self.id}: ${round(total, 2)}")  # Registra cálculo en el log
+        return round(total, 2)                  # Retorna el total redondeado a dos decimales
 
-    def describir(self):                        
-        return (                                
+    def describir(self):                        # Sobrescribe describir() para detallar la sala
+        return (                                # Construye la cadena descriptiva de la sala
             f"Servicio [Sala] ID: {self.id} | Costo Base: ${self.get_costo_base()} "
             f"| Capacidad: {self.capacidad} personas | Proyector: {'Sí' if self.proyector else 'No'}"
         )
 
 
 # ---------------- SERVICIO 2: ALQUILER DE EQUIPO ----------------
-class AlquilerEquipo(Servicio):                 
-    def __init__(self, id, costo_base, tipo_equipo, disponible=True):   
-        super().__init__(id, costo_base, disponible)   
-        if not isinstance(tipo_equipo, str) or not tipo_equipo.strip():  
-            raise ServicioError("El tipo de equipo no puede estar vacío")   
-        self.tipo_equipo = tipo_equipo          
+class AlquilerEquipo(Servicio):                 # Servicio especializado para alquiler de equipos
+    def __init__(self, id, costo_base, tipo_equipo, disponible=True):   # Constructor de equipo
+        super().__init__(id, costo_base, disponible)   # Inicializa atributos comunes de Servicio
+        if not isinstance(tipo_equipo, str) or not tipo_equipo.strip():  # Valida que tipo_equipo sea texto no vacío
+            raise ServicioError("El tipo de equipo no puede estar vacío")   # Error por tipo de equipo inválido
+        self.tipo_equipo = tipo_equipo.strip()  # Guarda el nombre del equipo sin espacios sobrantes
 
-    def calcular_costo(self, dias, seguro=False):   
-        if not es_numero(dias) or dias <= 0:    
-            raise ServicioError("Los días de alquiler de equipo deben ser mayores a cero")  
-        if not isinstance(seguro, bool):        
-            raise ServicioError("El seguro debe ser un valor verdadero o falso")   
-        total = self.get_costo_base() * dias    
-        if seguro:                              
-            total += 15.0 * dias                
-        logging.info(f"Cálculo de costo para AlquilerEquipo ID {self.id}: ${total}")   
-        return round(total, 2)                  
+    def calcular_costo(self, dias, seguro=False, impuesto=0.0):   # Sobrecarga mediante seguro e impuesto opcionales
+        if not es_numero(dias) or dias <= 0:    # Valida que los días sean un número mayor a cero
+            raise ServicioError("Los días de alquiler de equipo deben ser mayores a cero")  # Error por días inválidos
+        if not isinstance(seguro, bool):        # Valida que seguro sea booleano
+            raise ServicioError("El seguro debe ser un valor verdadero o falso")   # Error por tipo inválido
+        self._validar_impuesto(impuesto)        # Valida el porcentaje de impuesto opcional
+        subtotal = self.get_costo_base() * dias # Calcula el costo base multiplicado por los días
+        if seguro:                              # Si se solicita seguro, agrega la tarifa diaria
+            subtotal += 15.0 * dias             # Recargo de $15.0 por cada día asegurado
+        total = subtotal * (1 + impuesto)       # Aplica el impuesto opcional sobre el subtotal
+        logging.info(f"Cálculo de costo para AlquilerEquipo ID {self.id}: ${round(total, 2)}")  # Registra en el log
+        return round(total, 2)                  # Retorna el total redondeado a dos decimales
 
-    def describir(self):                        
-        return (                                
+    def describir(self):                        # Sobrescribe describir() para detallar el equipo
+        return (                                # Construye la cadena descriptiva del equipo
             f"Servicio [Equipo] ID: {self.id} | Costo Base: ${self.get_costo_base()} "
             f"| Tipo de Equipo: {self.tipo_equipo}"
         )
 
 
 # ---------------- SERVICIO 3: ASESORÍA ESPECIALIZADA ----------------
-class AsesoriaEspecializada(Servicio):          
-    def __init__(self, id, costo_base, area_experticia, disponible=True):   
-        super().__init__(id, costo_base, disponible)   
-        if not isinstance(area_experticia, str) or not area_experticia.strip():  
-            raise ServicioError("El área de experticia no puede estar vacía")   
-        self.area_experticia = area_experticia  
+class AsesoriaEspecializada(Servicio):          # Servicio especializado para asesorías técnicas
+    def __init__(self, id, costo_base, area_experticia, disponible=True):   # Constructor de asesoría
+        super().__init__(id, costo_base, disponible)   # Inicializa atributos comunes de Servicio
+        if not isinstance(area_experticia, str) or not area_experticia.strip():  # Valida que el área no esté vacía
+            raise ServicioError("El área de experticia no puede estar vacía")    # Error por área inválida
+        self.area_experticia = area_experticia.strip()  # Guarda el área de experticia limpia
 
-    def calcular_costo(self, sesiones, nivel_senior=False):   
-        if not isinstance(sesiones, int) or isinstance(sesiones, bool) or sesiones <= 0:  
-            raise ServicioError("El número de sesiones de asesoría debe ser mayor a cero")  
-        if not isinstance(nivel_senior, bool):  
-            raise ServicioError("El nivel senior debe ser un valor verdadero o falso")   
-        multiplicador = 1.5 if nivel_senior else 1.0   
-        total = self.get_costo_base() * sesiones * multiplicador   
-        logging.info(f"Cálculo de costo para AsesoriaEspecializada ID {self.id}: ${total}")  
-        return round(total, 2)                  
+    def calcular_costo(self, sesiones, nivel_senior=False, impuesto=0.0):   # Sobrecarga con nivel senior e impuesto
+        if not isinstance(sesiones, int) or isinstance(sesiones, bool) or sesiones <= 0:  # Sesiones debe ser entero > 0
+            raise ServicioError("El número de sesiones de asesoría debe ser mayor a cero")  # Error por sesiones inválidas
+        if not isinstance(nivel_senior, bool):  # Valida que nivel_senior sea booleano
+            raise ServicioError("El nivel senior debe ser un valor verdadero o falso")      # Error por tipo inválido
+        self._validar_impuesto(impuesto)        # Valida el porcentaje de impuesto opcional
+        multiplicador = 1.5 if nivel_senior else 1.0   # Recargo del 50% si la asesoría es nivel senior
+        total = self.get_costo_base() * sesiones * multiplicador * (1 + impuesto)  # Calcula el total final
+        logging.info(f"Cálculo de costo para AsesoriaEspecializada ID {self.id}: ${round(total, 2)}")  # Log
+        return round(total, 2)                  # Retorna el total redondeado a dos decimales
 
-    def describir(self):                        
-        return (                                
+    def describir(self):                        # Sobrescribe describir() para detallar la asesoría
+        return (                                # Construye la cadena descriptiva de la asesoría
             f"Servicio [Asesoría] ID: {self.id} | Costo Base: ${self.get_costo_base()} "
             f"| Área: {self.area_experticia}"
         )
@@ -340,6 +350,10 @@ def cancelar_dos_veces():                                   # Prueba de operaci�
     reservas[0].cancelar()                                  # Segunda cancelación: lanza error
 
 
+def confirmar_ya_confirmada():                              # Prueba de doble confirmación no permitida
+    reservas[1].confirmar()                                 # La reserva ya está CONFIRMADA: lanza ReservaError
+
+
 # ---------------- PROGRAMA PRINCIPAL ----------------
 def main():                                                 # Función principal
     logging.info("Inicio de la simulación de Software FJ")  # Guarda el inicio en el log
@@ -369,6 +383,13 @@ def main():                                                 # Función principal
 
     # --- Operación no permitida ---
     operacion("16. Cancelar dos veces la misma reserva", cancelar_dos_veces)
+
+    # --- Pruebas complementarias de validación, sobrecarga con impuestos y estados ---
+    operacion("17. Registrar cliente con nombre muy corto", lambda: registrar_cliente("Jo", "jo@correo.com"))
+    operacion("18. Crear equipo disponible para alquiler", lambda: registrar_servicio(AlquilerEquipo, 40.0, "Laptop Pro", disponible=True))
+    operacion("19. Reserva de equipo: 3 días con seguro e IVA del 19%", lambda: hacer_reserva(0, 3, 3, seguro=True, impuesto=0.19))
+    operacion("20. Reserva de sala: 2 horas con 10% de descuento e IVA del 19%", lambda: hacer_reserva(0, 0, 2, descuento=0.10, impuesto=0.19))
+    operacion("21. Intentar confirmar una reserva ya confirmada", confirmar_ya_confirmada)
 
     print("\n----- RESUMEN -----")                           # Título del resumen final
     print("Clientes registrados:", len(clientes))            # Cantidad de clientes
