@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 220" width="960" height="220" role="img" aria-label="Programación 213023 - Fase 4 Prácticas Simuladas - Software FJ">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#072B47"/>
+      <stop offset="55%" stop-color="#005883"/>
+      <stop offset="100%" stop-color="#0B4F71"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F47920"/>
+      <stop offset="100%" stop-color="#F0B429"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#FFFFFF" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="220" rx="14" fill="url(#bg)"/>
+  <rect width="960" height="220" rx="14" fill="url(#grid)"/>
+
+  <!-- Decorative geometric accents -->
+  <circle cx="885" cy="42" r="90" fill="#F0B429" fill-opacity="0.10"/>
+  <circle cx="920" cy="185" r="65" fill="#F47920" fill-opacity="0.14"/>
+  <rect x="0" y="212" width="960" height="8" rx="4" fill="url(#accent)"/>
+
+  <!-- Course pill badge -->
+  <rect x="44" y="34" width="275" height="28" rx="14" fill="#FFFFFF" fill-opacity="0.14" stroke="#F0B429" stroke-opacity="0.6" stroke-width="1"/>
+  <text x="181.5" y="52.5" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" letter-spacing="1.2" fill="#FDE68A">
+    CURSO · PROGRAMACIÓN (213023)
+  </text>
+
+  <!-- Main Title -->
+  <text x="44" y="106" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="36" font-weight="800" fill="#FFFFFF">
+    Fase 4: Prácticas Simuladas
+  </text>
+
+  <!-- Subtitle -->
+  <text x="44" y="140" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#D8ECFA">
+    Software FJ — Sistema Integral de Gestión de Clientes, Servicios y Reservas
+  </text>
+
+  <!-- Divider -->
+  <rect x="44" y="158" width="120" height="3" rx="1.5" fill="url(#accent)"/>
+
+  <!-- Footer metadata -->
+  <text x="44" y="186" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="600" fill="#B8D9EE">
+    Universidad Nacional Abierta y a Distancia (UNAD)  ·  ECBTI  ·  Grupo 213023_444  ·  Python POO
+  </text>
+</svg>
